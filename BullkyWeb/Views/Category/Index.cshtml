@@ -1,5 +1,6 @@
 ﻿@model  IEnumerable<BullkyWeb.Models.Category>
 
+
 <div class="container">
     <div class="row pt-4 pb-4">
         <div class="col-6">
@@ -34,10 +35,10 @@
                 <td>@obj.DisplayOrder</td>
                 <td>
                     <div class="w-70 btn-group " role="group" >
-                        <a asp-controller="Category" asp-action="Edit" class="btn btn-primary mx-2">
+                        <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
-                        <a asp-controller="Category" asp-action="Delete" class="btn btn-danger mx-2">
+                        <a asp-controller="Category" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
                             <i class="bi bi-trash"></i> Delete
                         </a>
 
