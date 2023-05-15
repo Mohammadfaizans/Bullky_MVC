@@ -1,5 +1,6 @@
-﻿using BullkyWeb.Data;
-using BullkyWeb.Models;
+﻿
+using Bulky.DataAccess.Data;
+using Bulky.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BullkyWeb.Controllers
@@ -21,7 +22,7 @@ namespace BullkyWeb.Controllers
         {
             return View();
         }
-
+         
         [HttpPost]
         public IActionResult Create(Category obj)
         {
