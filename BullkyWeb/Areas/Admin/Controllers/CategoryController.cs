@@ -9,8 +9,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _categoryRepo
-            ;
+        private readonly ICategoryRepository _categoryRepo;
+            
         public CategoryController(ICategoryRepository db)
         {
             _categoryRepo = db;
