@@ -42,9 +42,14 @@ namespace Bulky.DataAccess.Repository
         }
 
         //it will all the prop from category table 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
             IQueryable<T> qurey = dbSet;
+            if(filter != null)
+            {
+                qurey = qurey.Where(filter);
+
+            }
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach(var includeProp in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))

@@ -1,7 +1,9 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -11,12 +13,14 @@ namespace BulkyWeb.Areas.Customer.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IProductRepository _productRepo;
         private readonly ICategoryRepository _categorybd;
+        private readonly IShoppingCartRepository _shoppingCartdb;
 
-        public HomeController(ILogger<HomeController> logger, IProductRepository db, ICategoryRepository categorydb)
+        public HomeController(ILogger<HomeController> logger, IProductRepository db, ICategoryRepository categorydb, IShoppingCartRepository shoppingCartdb)
         {
             _logger = logger;
             _productRepo = db;
             _categorybd = categorydb;
+            _shoppingCartdb = shoppingCartdb;
         }
 
         public IActionResult Index()
@@ -27,8 +31,41 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         public IActionResult Details(int productId)
         {
-            var prduct = _productRepo.Get(u=>u.Id == productId , includeProperties: "Category");
-            return View(prduct);
+            ShoppingCart cart = new()
+            {
+                Product = _productRepo.Get(u => u.Id == productId, includeProperties: "Category"),
+                Count = 1,
+                ProductId = productId
+
+            };
+            return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            shoppingCart.ApplicationUserId = userId;
+
+            ShoppingCart cartFromDb = _shoppingCartdb.Get(u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
+
+            if (cartFromDb != null)
+            {
+                //shopping cart exists
+                cartFromDb.Count += shoppingCart.Count;
+                _shoppingCartdb.Update(cartFromDb);
+            }
+            else
+            {
+                _shoppingCartdb.Add(shoppingCart);
+
+            }
+            TempData["success"] = "cart update successfully";
+            _shoppingCartdb.Save();
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()

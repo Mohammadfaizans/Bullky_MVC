@@ -2,13 +2,17 @@
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.Data;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+   // [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller 
     {
         private  ICategoryRepository _categoryRepo;
@@ -33,7 +37,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult Upsert(int? id) //UpdateInsert when u creating u will not have an Id but when u update i have an Id
         {
             ProductVM productVm = new()
-            {
+            { 
                 CategoryList = _categoryRepo.GetAll().Select(u => new SelectListItem
                 {
 
@@ -104,7 +108,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
 
         #region API CALLS 
-
+        //[HttpGet("ViewActiveBooking")]
         [HttpGet]
         public IActionResult GetAll()
         {
